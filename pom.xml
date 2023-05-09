@@ -28,12 +28,12 @@
     <animal.sniffer.skip>true</animal.sniffer.skip>
     <java.level>8</java.level>
 
-    <groovy-all.version>3.0.17</groovy-all.version>
+    <groovy-all.version>4.0.2</groovy-all.version>
     <groovy-cps.version>1.31</groovy-cps.version>
     <jenkins-core.version>2.263</jenkins-core.version>
   </properties>
 
-  <inceptionYear>2017</inceptionYear>
+  <inceptionYear>2023</inceptionYear>
 
   <issueManagement>
     <system>GitHub</system>
@@ -60,6 +60,10 @@
 
   <repositories>
     <repository>
+      <id>repo.maven.apache.org</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
@@ -80,7 +84,7 @@
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all -->
     <dependency>
-      <groupId>org.codehaus.groovy</groupId>
+      <groupId>org.apache.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>${groovy-all.version}</version>
       <type>pom</type>
@@ -95,13 +99,29 @@
         </exclusion>
       </exclusions>
     </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.codehaus.groovy</groupId>-->
+<!--      <artifactId>groovy-all</artifactId>-->
+<!--      <version>${groovy-all.version}</version>-->
+<!--      <type>pom</type>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.codehaus.groovy</groupId>-->
+<!--          <artifactId>groovy-test</artifactId>-->
+<!--        </exclusion>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.codehaus.groovy</groupId>-->
+<!--          <artifactId>groovy-testng</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
 
     <!-- https://mvnrepository.com/artifact/com.cloudbees/groovy-cps -->
-    <dependency>
-      <groupId>com.cloudbees</groupId>
-      <artifactId>groovy-cps</artifactId>
-      <version>${groovy-cps.version}</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.cloudbees</groupId>-->
+<!--      <artifactId>groovy-cps</artifactId>-->
+<!--      <version>${groovy-cps.version}</version>-->
+<!--    </dependency>-->
 
     <!-- https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core -->
     <dependency>
@@ -145,18 +165,19 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>${project.basedir}/src</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+    <scriptSourceDirectory>${project.basedir}/src/main/groovy</scriptSourceDirectory>
+    <!--<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
+    <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
 
   <plugins>
     <plugin>
       <groupId>org.codehaus.gmavenplus</groupId>
       <artifactId>gmavenplus-plugin</artifactId>
-      <version>1.6.3</version>
+      <version>1.13.1</version>
       <dependencies>
         <dependency>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy-all</artifactId>
+          <groupId>org.apache.groovy</groupId>
+          <artifactId>groovy</artifactId>
           <version>${groovy-all.version}</version>
           <scope>runtime</scope>
         </dependency>
@@ -170,7 +191,13 @@
           <configuration>
             <sources>
               <fileset>
-                <directory>${pom.basedir}/src</directory>
+                <directory>${pom.basedir}/src/main</directory>
+                <includes>
+                  <include>**/*.groovy</include>
+                </includes>
+              </fileset>
+              <fileset>
+                <directory>${pom.basedir}/vars</directory>
                 <includes>
                   <include>**/*.groovy</include>
                 </includes>
@@ -245,7 +272,7 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-jar-plugin</artifactId>
-      <version>3.0.2</version>
+      <version>3.3.0</version>
       <executions>
         <execution>
           <goals>
@@ -257,6 +284,7 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-source-plugin</artifactId>
+      <version>3.2.1</version>
       <executions>
         <execution>
           <id>attach-sources</id>

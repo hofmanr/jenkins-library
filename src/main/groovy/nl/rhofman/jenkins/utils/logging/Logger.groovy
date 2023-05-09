@@ -1,9 +1,7 @@
-package nl.rhofman.jenkins.pipeline.utils
+package nl.rhofman.jenkins.utils.logging
 
-import com.cloudbees.groovy.cps.NonCPS
-import io.wcm.devops.jenkins.pipeline.utils.ConfigConstants
+import nl.rhofman.jenkins.utils.Config
 import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException
-import org.jenkinsci.plugins.workflow.cps.DSL
 
 /**
  * Logging functionality for pipeline scripts.
@@ -11,11 +9,6 @@ import org.jenkinsci.plugins.workflow.cps.DSL
 class Logger implements Serializable {
 
     private static final long serialVersionUID = 1L
-
-    /**
-     * Reference to the dsl/script object
-     */
-    static DSL dsl
 
     /**
      * Reference to the CpsScript/WorkflowScript
@@ -59,18 +52,15 @@ class Logger implements Serializable {
     /**
      * Initializes the logger with DSL/steps object and LogLevel
      *
-     * @param dsl The DSL object of the current pipeline script (available via this.steps in pipeline scripts)
      * @param logLvl The log level to use during execution of the pipeline script
      * @deprecated still used by tests
      */
-    @NonCPS
-    static void init(DSL dsl, LogLevel logLvl = LogLevel.INFO) {
+    static void init(LogLevel logLvl = LogLevel.INFO) {
         if (logLvl == null) logLvl = LogLevel.INFO
         level = logLvl
         if (Logger.initialized == true) {
             return
         }
-        this.dsl = dsl
         initialized = true
         Logger tmpLogger = new Logger('Logger')
         tmpLogger.deprecated('Logger.init(DSL dsl, logLevel)','Logger.init(Script script, logLevel)')
@@ -82,7 +72,6 @@ class Logger implements Serializable {
      * @param script CpsScript object of the current pipeline script (available via this in pipeline scripts)
      * @param map The configuration object of the pipeline
      */
-    @NonCPS
     static void init(Script script, LogLevel logLvl = LogLevel.INFO) {
         if (logLvl == null) logLvl = LogLevel.INFO
         level = logLvl
@@ -90,7 +79,6 @@ class Logger implements Serializable {
             return
         }
         this.script = script
-        this.dsl = (DSL) script.steps
         initialized = true
     }
 
@@ -100,11 +88,10 @@ class Logger implements Serializable {
      * @param script CpsScript object of the current pipeline script (available via this in pipeline scripts)
      * @param map The configuration object of the pipeline
      */
-    @NonCPS
     static void init(Script script, Map map) {
         LogLevel lvl
         if (map) {
-            lvl = map[ConfigConstants.LOGLEVEL] ?: LogLevel.INFO
+            lvl = map[Config.LOGLEVEL] ?: LogLevel.INFO
         } else {
             lvl = LogLevel.INFO
         }
@@ -117,7 +104,6 @@ class Logger implements Serializable {
      * @param script CpsScript object of the current pipeline script (available via this in pipeline scripts)
      * @param sLevel the log level as string
      */
-    @NonCPS
     static void init(Script script, String sLevel) {
         if (sLevel == null) sLevel = LogLevel.INFO
         init(script, LogLevel.fromString(sLevel))
@@ -130,7 +116,6 @@ class Logger implements Serializable {
      * @param iLevel the log level as integer
      *
      */
-    @NonCPS
     static void init(Script script, Integer iLevel) {
         if (iLevel == null) iLevel = LogLevel.INFO.getLevel()
         init(script, LogLevel.fromInteger(iLevel))
@@ -142,7 +127,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void trace(String message, Object object) {
         log(LogLevel.TRACE, message, object)
     }
@@ -153,7 +137,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void info(String message, Object object) {
         log(LogLevel.INFO, message, object)
     }
@@ -164,7 +147,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void debug(String message, Object object) {
         log(LogLevel.DEBUG, message, object)
     }
@@ -175,7 +157,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void warn(String message, Object object) {
         log(LogLevel.WARN, message, object)
     }
@@ -186,7 +167,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void error(String message, Object object) {
         log(LogLevel.ERROR, message, object)
     }
@@ -197,7 +177,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void fatal(String message, Object object) {
         log(LogLevel.FATAL, message, object)
     }
@@ -207,7 +186,6 @@ class Logger implements Serializable {
      *
      * @param message The message to be logged
      */
-    @NonCPS
     void trace(String message) {
         log(LogLevel.TRACE, message)
     }
@@ -217,7 +195,6 @@ class Logger implements Serializable {
      *
      * @param message The message to be logged
      */
-    @NonCPS
     void info(String message) {
         log(LogLevel.INFO, message)
     }
@@ -227,7 +204,6 @@ class Logger implements Serializable {
      *
      * @param message The message to be logged
      */
-    @NonCPS
     void debug(String message) {
         log(LogLevel.DEBUG, message)
     }
@@ -237,7 +213,6 @@ class Logger implements Serializable {
      *
      * @param message The message to be logged
      */
-    @NonCPS
     void warn(String message) {
         log(LogLevel.WARN, message)
     }
@@ -248,24 +223,8 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void error(String message) {
         log(LogLevel.ERROR, message)
-    }
-
-    /**
-     * Logs a deprecation message
-     *
-     * @param message The message to be logged
-     */
-    @NonCPS
-    void deprecated(String message) {
-        try {
-            Logger.dsl.addWarningBadge(message)
-        } catch (Throwable ex) {
-            // no badge plugin available
-        }
-        log(LogLevel.DEPRECATED, message)
     }
 
     /**
@@ -274,7 +233,6 @@ class Logger implements Serializable {
      * @param deprecatedItem The item that is depcrecated
      * @param newItem The replacement (if exist)
      */
-    @NonCPS
     void deprecated(String deprecatedItem, String newItem) {
         String message = "The step/function/class '$deprecatedItem' is marked as deprecated and will be removed in future releases. " +
                 "Please use '$newItem' instead."
@@ -287,7 +245,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void fatal(String message) {
         log(LogLevel.FATAL, message)
     }
@@ -299,7 +256,6 @@ class Logger implements Serializable {
      * @param message The message to be logged
      * @param object The object to be dumped
      */
-    @NonCPS
     void log(LogLevel logLevel, String message, Object object) {
         if (doLog(logLevel)) {
             def objectName = getClassName(object)
@@ -321,7 +277,6 @@ class Logger implements Serializable {
      * @param logLevel the loglevel to be used
      * @param message The message to be logged
      */
-    @NonCPS
     void log(LogLevel logLevel, String message) {
         if (doLog(logLevel)) {
             String msg = "$name : $message"
@@ -335,15 +290,12 @@ class Logger implements Serializable {
      * @param logLevel the loglevel to be used
      * @param msg The message to be logged
      */
-    @NonCPS
     private static void writeLogMsg(LogLevel logLevel, String msg) {
         String lvlString = "[${logLevel.toString()}]"
 
         lvlString = wrapColor(logLevel.getColorCode(), lvlString)
 
-        if (dsl != null) {
-            dsl.echo("$lvlString $msg")
-        }
+        println "$lvlString $msg"
     }
 
     /**
@@ -352,7 +304,6 @@ class Logger implements Serializable {
      * @param str
      * @return
      */
-    @NonCPS
     private static String wrapColor(String colorCode, String str) {
         String ret = str
         if (hasTermEnv()) {
@@ -365,7 +316,6 @@ class Logger implements Serializable {
      * Helper function to detect if a term environment is available
      * @return
      */
-    @NonCPS
     private static Boolean hasTermEnv() {
         String termEnv = null
         if (script != null) {
@@ -384,7 +334,6 @@ class Logger implements Serializable {
      * @param logLevel
      * @return true , when the loglevel should be displayed, false when the loglevel is disabled
      */
-    @NonCPS
     private static boolean doLog(LogLevel logLevel) {
         if (logLevel.getLevel() >= level.getLevel()) {
             return true
@@ -397,7 +346,6 @@ class Logger implements Serializable {
      * @param object
      * @return
      */
-    @NonCPS
     private static String getClassName(Object object) {
         String objectName = null
         // try to retrieve as much information as possible about the class
