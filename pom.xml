@@ -175,9 +175,9 @@
   </dependencies>
 
   <build>
-    <scriptSourceDirectory>${project.basedir}/src/main/groovy</scriptSourceDirectory>
+    <scriptSourceDirectory>${project.basedir}/src</scriptSourceDirectory>
     <!--<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
-    <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
+    <!-- <testSourceDirectory>${project.basedir}/src</testSourceDirectory> -->
 
   <plugins>
     <plugin>
@@ -201,7 +201,7 @@
           <configuration>
             <sources>
               <fileset>
-                <directory>${pom.basedir}/src/main</directory>
+                <directory>${pom.basedir}/src</directory>
                 <includes>
                   <include>**/*.groovy</include>
                 </includes>
