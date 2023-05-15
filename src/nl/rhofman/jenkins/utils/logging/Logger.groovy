@@ -328,6 +328,7 @@ class Logger implements Serializable {
      * @param str
      * @return
      */
+    @NonCPS
     private static String wrapColor(String colorCode, String str) {
         String ret = str
         if (hasTermEnv()) {
