@@ -1,9 +1,14 @@
+import nl.rhofman.jenkins.utils.logging.Logger
+
 def call(Map<String, Object> params = [:]) {
     Map<String, Object> resolvedParams = [
             pomLocation: 'pom.xml',
             deleteBuildOnBump: false,
             renameJenkinsBuild: false
     ] << params
+
+    Logger.init(this)
+    def logger = new Logger(this)
 
     // Multibranch pipeline jobs possesses the environment variable BRANCH_NAME; normal pipeline jobs not
     if (!env.BRANCH_NAME) {
@@ -28,6 +33,9 @@ def call(Map<String, Object> params = [:]) {
         causedByUser = currentBuild.rawBuild.getCause(Cause.UserIdCause).getUserId().toString()
         env.IS_AUTOMATED_BUILD = false
     }
+
+    logger.info "init build job from ${resolvedParams.pomLocation}"
+
     // if authors is empty (no GIT-commit by user) and the job is not started by a user, then abort the job
     if (authors.empty && Boolean.valueOf(env.IS_AUTOMATED_BUILD) && (Integer.valueOf(env.BUILD_NUMBER) > 1)) {
         sh "Abort pipeline job"
@@ -41,5 +49,7 @@ def call(Map<String, Object> params = [:]) {
 
     env.LAST_COMMITTER = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%an'").trim()
     sh "logger fullProjectName='${currentBuild.fullProjectName}', build='${currentBuild.displayName}', lastCommitter='${env.LAST_COMMITTER}', authors='${authors.unique()}'"
+
+    logger.info "done init build"
 }
 

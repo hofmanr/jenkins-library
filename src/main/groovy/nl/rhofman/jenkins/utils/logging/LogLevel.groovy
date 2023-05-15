@@ -1,12 +1,11 @@
 package nl.rhofman.jenkins.utils.logging
 
-//import com.cloudbees.groovy.cps.NonCPS
-//import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import com.cloudbees.groovy.cps.NonCPS
+
 
 /**
  * Enumeration for log levels
  */
-//@SuppressFBWarnings('ME_ENUM_FIELD_SETTER')
 enum LogLevel implements Serializable {
 
     ALL(0, 0),
@@ -32,7 +31,7 @@ enum LogLevel implements Serializable {
         this.color = color
     }
 
-//    @NonCPS
+    @NonCPS
     static LogLevel fromInteger(Integer value) {
         for (lvl in values()) {
             if (lvl.getLevel() == value) return lvl
@@ -40,7 +39,7 @@ enum LogLevel implements Serializable {
         return INFO
     }
 
-//    @NonCPS
+    @NonCPS
     static LogLevel fromString(String value) {
         for (lvl in values()) {
             if (lvl.toString().equalsIgnoreCase(value)) return lvl
@@ -48,10 +47,9 @@ enum LogLevel implements Serializable {
         return INFO
     }
 
-//    @NonCPS
+    @NonCPS
     public String getColorCode() {
         return COLOR_CODE_PREFIX + color.toString()
     }
-
 
 }

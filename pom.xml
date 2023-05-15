@@ -28,9 +28,10 @@
     <animal.sniffer.skip>true</animal.sniffer.skip>
     <java.level>8</java.level>
 
-    <groovy-all.version>4.0.2</groovy-all.version>
-    <groovy-cps.version>1.31</groovy-cps.version>
-    <jenkins-core.version>2.263</jenkins-core.version>
+    <groovy-all.version>3.0.17</groovy-all.version>
+    <groovy-cps.version>1.34</groovy-cps.version>
+    <jenkins-core.version>2.401</jenkins-core.version>
+    <workflow-aggregator.version>2.7</workflow-aggregator.version>
   </properties>
 
   <inceptionYear>2023</inceptionYear>
@@ -82,9 +83,9 @@
   </distributionManagement>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all -->
+    <!-- Groovy dependencies -->
     <dependency>
-      <groupId>org.apache.groovy</groupId>
+      <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>${groovy-all.version}</version>
       <type>pom</type>
@@ -99,45 +100,59 @@
         </exclusion>
       </exclusions>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.codehaus.groovy</groupId>-->
-<!--      <artifactId>groovy-all</artifactId>-->
-<!--      <version>${groovy-all.version}</version>-->
-<!--      <type>pom</type>-->
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.codehaus.groovy</groupId>-->
-<!--          <artifactId>groovy-test</artifactId>-->
-<!--        </exclusion>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.codehaus.groovy</groupId>-->
-<!--          <artifactId>groovy-testng</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
-
     <!-- https://mvnrepository.com/artifact/com.cloudbees/groovy-cps -->
-<!--    <dependency>-->
-<!--      <groupId>com.cloudbees</groupId>-->
-<!--      <artifactId>groovy-cps</artifactId>-->
-<!--      <version>${groovy-cps.version}</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>com.cloudbees</groupId>
+      <artifactId>groovy-cps</artifactId>
+      <version>${groovy-cps.version}</version>
+    </dependency>
 
+    <!-- Jenkins Core dependencies -->
     <!-- https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>jenkins-core</artifactId>
       <version>${jenkins-core.version}</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins/structs -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.24</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>maven-plugin</artifactId>
+      <version>3.21</version>
+    </dependency>
 
-    <!-- for Jenkins Pipelines -->
+    <!-- dependencies for Jenkins Pipelines -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-aggregator</artifactId>
-      <version>2.6</version>
+      <version>${workflow-aggregator.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-step-api -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+      <version>2.24</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-job -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <version>2.42</version>
     </dependency>
 
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/commons-logging/commons-logging &ndash;&gt;-->
+    <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-cps -->
+<!--    <dependency>-->
+<!--      <groupId>org.jenkins-ci.plugins.workflow</groupId>-->
+<!--      <artifactId>workflow-cps</artifactId>-->
+<!--      <version>2.94.4</version>-->
+<!--    </dependency>-->
+
+    <!--    &lt;!&ndash; https://mvnrepository.com/artifact/commons-logging/commons-logging &ndash;&gt;-->
 <!--    <dependency>-->
 <!--      <groupId>commons-logging</groupId>-->
 <!--      <artifactId>commons-logging</artifactId>-->
@@ -147,20 +162,15 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>plain-credentials</artifactId>
-      <version>1.5</version>
+      <version>1.8</version>
     </dependency>
 
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>2.3.0</version>
+      <version>2.6.2</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>structs</artifactId>
-      <version>1.19</version>
-    </dependency>
 
   </dependencies>
 
@@ -174,14 +184,14 @@
       <groupId>org.codehaus.gmavenplus</groupId>
       <artifactId>gmavenplus-plugin</artifactId>
       <version>1.13.1</version>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.groovy</groupId>
-          <artifactId>groovy</artifactId>
-          <version>${groovy-all.version}</version>
-          <scope>runtime</scope>
-        </dependency>
-      </dependencies>
+<!--      <dependencies>-->
+<!--        <dependency>-->
+<!--          <groupId>org.apache.groovy</groupId>-->
+<!--          <artifactId>groovy</artifactId>-->
+<!--          <version>${groovy-all.version}</version>-->
+<!--          <scope>runtime</scope>-->
+<!--        </dependency>-->
+<!--      </dependencies>-->
       <executions>
         <execution>
           <id>compile</id>
