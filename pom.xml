@@ -126,12 +126,14 @@
       <version>3.21</version>
     </dependency>
 
-    <!-- dependencies for Jenkins Pipelines -->
+    <!-- for Jenkins Pipelines -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-aggregator</artifactId>
       <version>${workflow-aggregator.version}</version>
     </dependency>
+    <!-- zip, tar, readJSON, readProperties en ReadMavenPom -->
+    <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins/pipeline-utility-steps -->
     <!-- https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-step-api -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
