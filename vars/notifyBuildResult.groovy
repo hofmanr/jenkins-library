@@ -7,5 +7,11 @@ def call(Map params = [:]) {
     Logger.init(this)
     def logger = new Logger(this)
 
-    logger.info "Params [deployEnv: ${resolvedParams.deployEnv}, isSuccess: ${resolvedParams.isSuccess}]"
+    def result = resolvedParams.isSuccess ? "successful" : "unsuccessful"
+    if (resolvedParams.isSuccess) {
+        logger.info "Build ${env.BRANCH_NAME} with build #${env.BUILD_UD} was $result"
+    } else {
+        logger.fatal "Build ${env.BRANCH_NAME} with build #${env.BUILD_UD} was $result"
+    }
+    logger.info "URL for checking the result: ${env.BUILD_URL}"
 }
