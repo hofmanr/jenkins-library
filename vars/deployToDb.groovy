@@ -2,7 +2,7 @@ import nl.rhofman.jenkins.utils.logging.Logger
 
 def call(params = [:]) {
     def defaultParams = [pomlocation: 'pom.xml']
-    def resolvedParams = params << defaultParams
+    def resolvedParams = defaultParams << params
 
     Logger.init(this)
     def logger = new Logger(this)
