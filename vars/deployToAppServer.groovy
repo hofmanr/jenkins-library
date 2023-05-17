@@ -7,5 +7,5 @@ def call(Map params = [:]) {
     Logger.init(this)
     def logger = new Logger(this)
 
-    logger.info "Params [name: ${resolvedParams.name}, stage: ${resolvedParams.stage}, pomLocation: ${resolvedParams.pomLocation}]"
+    logger.info "Params [destination: ${resolvedParams.destination}, credentials: ${resolvedParams.credentials}, pomLocation: ${resolvedParams.pomLocation}]"
 }
