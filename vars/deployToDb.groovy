@@ -19,13 +19,23 @@ def call(Map params = [:]) {
     Logger.init(this)
     def logger = new Logger(this)
 
-    logger.info "Params [destination: ${resolvedParams.destination}, credentials: ${resolvedParams.credentials}, pomLocation: ${resolvedParams.pomLocation}]"
+    logger.info "params [destination: ${resolvedParams.destination}, credentials: ${resolvedParams.credentials}, pomLocation: ${resolvedParams.pomLocation}]"
 
-    if (!resolvedParams.releaseVersion) {
+    String artifactId
+    String version
+    if (!resolvedParams.releaseVersion || !resolvedParams.artifactId) {
         def pom = readMavenPom file: resolvedParams.pomLocation
-        logger.info "Pom version: ${pom.version}"
+        if (!resolvedParams.releaseVersion) {
+            version = pom.version
+            logger.info "use pom version: $version"
+        }
+        if (!resolvedParams.artifactId) {
+            artifactId = pom.artifactId
+            logger.info "use pom artifactId: $artifactId"
+        }
     }
-//    def pom = readMavenPom file: resolvedParams.pomLocation
-//    logger.info "Pom [version: ${pom.version}, artitfact: ${pom.artifactId}]"
+
+    artifactId = resolvedParams.artifactId ?: artifactId
+    version = resolvedParams.releaseVersion ?: version
 }
 
