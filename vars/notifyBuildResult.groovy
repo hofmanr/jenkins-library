@@ -9,9 +9,9 @@ def call(Map params = [:]) {
 
     def result = resolvedParams.isSuccess ? "successful" : "unsuccessful"
     if (resolvedParams.isSuccess) {
-        logger.info "Build ${env.BRANCH_NAME} with build #${env.BUILD_UD} was $result"
+        logger.info "Build ${env.BRANCH_NAME} with build #${env.BUILD_ID} to ${resolvedParams.deployEnv} was $result"
     } else {
-        logger.fatal "Build ${env.BRANCH_NAME} with build #${env.BUILD_UD} was $result"
+        logger.fatal "Build ${env.BRANCH_NAME} with build #${env.BUILD_ID} to ${resolvedParams.deployEnv} was $result"
     }
     logger.info "URL for checking the result: ${env.BUILD_URL}"
 }
