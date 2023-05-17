@@ -3,9 +3,9 @@ import nl.rhofman.jenkins.utils.logging.Logger
 /**
  * Deployment to database
  * <ul>
- *     <li>artifactId   - optional: the artifact to be deployed; if not supplied get it from the pom.xml</li>
- *     <li>destination  - required: destination information (name of the destination and stage)<li>
- *     <li>releaseVersion   - required: the version to be released</li>
+ *     <li>artifactId       - optional: the artifact to be deployed; if not supplied get it from the pom.xml</li>
+ *     <li>destination      - required: destination information (name of the destination and stage)<li>
+ *     <li>releaseVersion   - optional: the version to be released; if not supplied get it from the pom.xml</li>
  *     <li>credentials      - required: the username/password or token for destination</li>
  *     <li>pomLocation      - optional: the pom.xml to be used; default value pom.xml
  * </ul>
@@ -21,6 +21,10 @@ def call(Map params = [:]) {
 
     logger.info "Params [destination: ${resolvedParams.destination}, credentials: ${resolvedParams.credentials}, pomLocation: ${resolvedParams.pomLocation}]"
 
+    if (!resolvedParams.releaseVersion) {
+        def pom = readMavenPom file: resolvedParams.pomLocation
+        logger.info "Pom version: ${pom.version}"
+    }
 //    def pom = readMavenPom file: resolvedParams.pomLocation
 //    logger.info "Pom [version: ${pom.version}, artitfact: ${pom.artifactId}]"
 }
