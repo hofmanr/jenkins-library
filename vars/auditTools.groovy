@@ -3,9 +3,8 @@ def call(Map config) {
         echo "${config.message}"
         sh '''
          git version
-         java -version
+         mvn --version
          echo "M2_HOME = ${M2_HOME}"
-         ${M2_HOME}/bin/mvn --version
       '''
     }
 }

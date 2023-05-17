@@ -1,6 +1,6 @@
 import nl.rhofman.jenkins.utils.logging.Logger
 
-def call(params = [:]) {
+def call(Map params = [:]) {
     def defaultParams = [deployEnv: 'Develop', isSuccess: true]
     def resolvedParams = defaultParams << params
 
