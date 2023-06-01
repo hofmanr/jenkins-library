@@ -11,6 +11,8 @@ def call(Map<String, Object> params = [:]) {
     def logger = new Logger(this)
 
     logger.info "build with arguments ${resolvedParams.arguments}"
-    // withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {sh "mvn clean package"}
-    sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
+    withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+        sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
+    }
+//    sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
 }
