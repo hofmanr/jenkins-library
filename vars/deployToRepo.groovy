@@ -44,7 +44,7 @@ def call(Map params = [:]) {
     }
     logger.info("artifact $artifact")
 
-    withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
         sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=$pomLocation"
     }
 }

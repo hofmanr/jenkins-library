@@ -11,7 +11,13 @@ def call(Map<String, Object> params = [:]) {
     def logger = new Logger(this)
 
     logger.info "build with arguments ${resolvedParams.arguments}"
-    withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+
+//    configFileProvider(
+//            [configFile(fileId: jenkinsSettings, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
+//        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
+//    }
+
+    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
         sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
     }
 //    sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
