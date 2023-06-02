@@ -30,13 +30,13 @@ def call(Map params = [:]) {
     // Search for the artifact
     String pomLocation = resolvedParams.pomLocation
     def pos = pomLocation.indexOf('pom.xml')
-    def directory = '.'
+    def directory = '/'
     if (pos > 0) {
         directory = "/${pomLocation.substring(0, pos)}"  // .e.g. /bsb-ejb/
     }
     // def scriptDir = getClass().protectionDomain.codeSource.location.path // the script directory
-    String currentDir = new File(".").getAbsolutePath()
-    directory = "$currentDir$directory"
+    // String currentDir = new File(".").getAbsolutePath() // current directory
+    directory = "${env.WORKSPACE}$directory"
     logger.info("look for artifacts in directory $directory")
     def extension = ".${resolvedParams.packaging}"
     String artifact = ''
