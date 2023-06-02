@@ -32,8 +32,9 @@ def call(Map params = [:]) {
     def pos = pomLocation.indexOf('pom.xml')
     def directory = '.'
     if (pos > 0) {
-        directory = pomLocation.substring(0, pos)
+        directory = "./${pomLocation.substring(0, pos)}"  // .e.g. ./bsb-ejb/
     }
+    logger.info("look for artifacts in directory $directory")
     def extension = ".${resolvedParams.packaging}"
     String artifact = ''
     new File(directory).eachFileRecurse(FILES) {
@@ -41,7 +42,9 @@ def call(Map params = [:]) {
             artifact = it.absolutePath
         }
     }
+    logger.info("artifact $artifact")
 
-    // withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {sh "mvn clean package"}
-    sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=nexus-local -DpomFile=$pomLocation"
+    withMaven(mavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+        sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=$pomLocation"
+    }
 }
