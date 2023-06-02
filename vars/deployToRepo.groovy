@@ -25,20 +25,24 @@ def call(Map params = [:]) {
 
     def logger = new Logger(this)
 
-    logger.info "deploy with arguments ${resolvedParams.arguments}"
+    logger.info "deploy with pom ${resolvedParams.pomLocation} and packaging ${resolvedParams.packaging}"
 
     // Search for the artifact
     String pomLocation = resolvedParams.pomLocation
     def pos = pomLocation.indexOf('pom.xml')
     def directory = '.'
     if (pos > 0) {
-        directory = "./${pomLocation.substring(0, pos)}"  // .e.g. ./bsb-ejb/
+        directory = "/${pomLocation.substring(0, pos)}"  // .e.g. /bsb-ejb/
     }
+    // def scriptDir = getClass().protectionDomain.codeSource.location.path // the script directory
+    String currentDir = new File(".").getAbsolutePath()
+    directory = "$currentDir$directory"
     logger.info("look for artifacts in directory $directory")
     def extension = ".${resolvedParams.packaging}"
     String artifact = ''
     new File(directory).eachFileRecurse(FILES) {
         if (it.name.endsWith(extension)) {
+            logger.info("File ${it.absolutePath}")
             artifact = it.absolutePath
         }
     }
