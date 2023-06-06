@@ -25,14 +25,13 @@ def call(Map params = [:]) {
 
     def logger = new Logger(this)
 
-    logger.info "publish with pom ${resolvedParams.pomLocation} and packaging ${resolvedParams.packaging}"
     logger.info "params ${resolvedParams}"
 
     // Search for artifacts in de pom location and it's subdirectories
     def directory = FileUtils.getPomDirectory(resolvedParams.pomLocation)
     def pathname = "${env.WORKSPACE}$directory"  // full path
     def extension = ".${resolvedParams.packaging}"
-    logger.info("look for artifacts in directory $pathname with extension $extension")
+    logger.info("look for artifacts in subdirectories $pathname with extension $extension")
     def fileList = FileUtils.getFiles(pathname, extension)
     if (fileList.size() == 0) {
         logger.warn("No artifacts found")
