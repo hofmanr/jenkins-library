@@ -1,3 +1,4 @@
+import nl.rhofman.jenkins.utils.FileUtils
 import nl.rhofman.jenkins.utils.logging.Logger
 import static groovy.io.FileType.FILES
 
@@ -27,28 +28,22 @@ def call(Map params = [:]) {
 
     logger.info "deploy with pom ${resolvedParams.pomLocation} and packaging ${resolvedParams.packaging}"
 
-    // Search for the artifact
-    String pomLocation = resolvedParams.pomLocation
-    def pos = pomLocation.indexOf('pom.xml')
-    def directory = '/'
-    if (pos > 0) {
-        directory = "/${pomLocation.substring(0, pos)}"  // .e.g. /bsb-ejb/
-    }
-    // def scriptDir = getClass().protectionDomain.codeSource.location.path // the script directory
-    // String currentDir = new File(".").getAbsolutePath() // current directory
-    directory = "${env.WORKSPACE}$directory"
-    logger.info("look for artifacts in directory $directory")
+    // Search for artifacts in de pom location and it's subdirectories
+    def directory = FileUtils.getPomDirectory(resolvedParams.pomLocation)
+    def pathname = "${env.WORKSPACE}$directory"  // full path
     def extension = ".${resolvedParams.packaging}"
-    String artifact = ''
-    new File(directory).eachFileRecurse(FILES) {
-        if (it.name.endsWith(extension)) {
-            logger.info("File ${it.absolutePath}")
-            artifact = it.absolutePath
-        }
+    logger.info("look for artifacts in directory $pathname with extension $extension")
+    def fileList = FileUtils.getFiles(pathname, extension)
+    if (fileList.size() == 0) {
+        logger.warn("No artifacts found")
+        return
     }
-    logger.info("artifact $artifact")
 
     withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
-        sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=$pomLocation"
+        fileList.each { file ->
+            def artifact = file.absolutePath
+            logger.info("deploy artifact $artifact")
+            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=$pomLocation"
+        }
     }
 }
