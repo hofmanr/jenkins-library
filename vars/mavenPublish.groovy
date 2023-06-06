@@ -42,6 +42,7 @@ def call(Map params = [:]) {
         fileList.each { file ->
             def artifact = file.absolutePath
             logger.info("publish artifact $artifact")
+            sh "mvn help:effective-settings"
             sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
         }
     }
