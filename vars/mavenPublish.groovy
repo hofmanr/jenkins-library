@@ -1,10 +1,9 @@
 import nl.rhofman.jenkins.utils.FileUtils
 import nl.rhofman.jenkins.utils.logging.Logger
-import static groovy.io.FileType.FILES
-
+i
 /**
- * Deployment to Repository
- * The settings.xml must contain the credentials
+ * Publish artifacts to Repository (e.g. Nexus)
+ * The settings.xml must contain the credentials (for Nexus)
  * <ul>
  *     <li>pomLocation       - optional: the pom.xml to be used; default value pom.xml
  *     <li>groupId           - optional: the groupId of the deployed artifact; if not supplied get it from the pom.xml</li>
@@ -26,7 +25,8 @@ def call(Map params = [:]) {
 
     def logger = new Logger(this)
 
-    logger.info "deploy with pom ${resolvedParams.pomLocation} and packaging ${resolvedParams.packaging}"
+    logger.info "publish with pom ${resolvedParams.pomLocation} and packaging ${resolvedParams.packaging}"
+    logger.info "params ${resolvedParams}"
 
     // Search for artifacts in de pom location and it's subdirectories
     def directory = FileUtils.getPomDirectory(resolvedParams.pomLocation)
@@ -42,8 +42,8 @@ def call(Map params = [:]) {
     withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
         fileList.each { file ->
             def artifact = file.absolutePath
-            logger.info("deploy artifact $artifact")
-            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=$pomLocation"
+            logger.info("publish artifact $artifact")
+            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
         }
     }
 }
