@@ -39,11 +39,22 @@ def call(Map params = [:]) {
     }
 
     withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
-        fileList.each { file ->
-            def artifact = file.absolutePath
-            logger.info("publish artifact $artifact")
-            sh "mvn help:effective-settings"
+        sh "mvn help:effective-settings"
+    }
+
+    fileList.each { file ->
+        def artifact = file.absolutePath
+        logger.info("publish artifact $artifact")
+        withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
             sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
         }
     }
+//    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+//        fileList.each { file ->
+//            def artifact = file.absolutePath
+//            logger.info("publish artifact $artifact")
+//            sh "mvn help:effective-settings"
+//            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
+//        }
+//    }
 }
