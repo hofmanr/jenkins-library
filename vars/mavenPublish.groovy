@@ -41,7 +41,11 @@ def call(Map params = [:]) {
     }
 
     // Get version from pom-file
-    def pom = readMavenPom file: resolvedParams.pomLocation
+    // First get effective pom (the version could be a parent)
+    String pomLocation = "${resolvedParams.pomLocation}"
+    sh "mvn -N -f $pomLocation help:effective-pom -Doutput=effectivepom.xml"
+    pomLocation = pomLocation.replace('pom.xml', 'effectivepom.xml')
+    def pom = readMavenPom file: pomLocation
     String version = pom.version
     // Get repository URL (properties file in Jenkins)
     def repoUrl = "${resolvedParams.url}"
