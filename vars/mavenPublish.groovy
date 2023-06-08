@@ -54,16 +54,16 @@ def call(Map params = [:]) {
     }
 
     // Show the maven settings
-    configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-        sh "mvn -gs $MAVEN_GLOBAL_SETTINGS help:effective-settings"
+    configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_SETTINGS')]) {
+        sh "mvn -s $MAVEN_SETTINGS help:effective-settings"
     }
 
     fileList.each { file ->
         def artifact = file.absolutePath
         logger.info("publish artifact $artifact")
 
-        configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-            sh "mvn -gs $MAVEN_GLOBAL_SETTINGS deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
+        configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_SETTINGS')]) {
+            sh "mvn -s $MAVEN_SETTINGS deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
         }
 
 //        withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
