@@ -46,7 +46,7 @@ def call(Map params = [:]) {
     // Get repository URL (properties file in Jenkins)
     def repoUrl = "${resolvedParams.url}"
     configFileProvider([configFile(fileId: 'default-properties', variable: 'DEFAULT_PROPERTIES')]) {
-        def props = readProperties  file: $DEFAULT_PROPERTIES
+        def props = readProperties  file: "${DEFAULT_PROPERTIES}"
         if (version.toUpperCase().endsWith("-SNAPSHOT")) {
             repoUrl = props['NEXUS_SNAPSHOTS']
         } else {
