@@ -8,7 +8,7 @@ i
  *     <li>pomLocation       - optional: the pom.xml to be used; default value pom.xml
  *     <li>groupId           - optional: the groupId of the deployed artifact; if not supplied get it from the pom.xml</li>
  *     <li>artifactId        - optional: the artifact of the deployed artifact; if not supplied get it from the pom.xml</li>
- *     <li>url               - required: the repository URL (e.g. Nexus repo URL</li>
+ *     <li>url               - optional: the repository URL (e.g. Nexus repo URL</li>
  *     <li>packaging         - required: jar, war, ear or zip; artifact must have this extension and located in target directory</li>
  *     <li>mavenSettingsFile - optional: the maven settings file to be used; must be registered in Jenkins</li>
  *     <li>repositoryId      - optional: the repository ID to be used; default nexus-local</li>
@@ -41,7 +41,7 @@ def call(Map params = [:]) {
     }
 
     // Get version from pom-file
-    // First get effective pom (the version could be in the a parent)
+    // First get effective pom (the version could be in a parent)
     String pomLocation = "${resolvedParams.pomLocation}"
     sh "mvn -N -f $pomLocation help:effective-pom -Doutput=effectivepom.xml"
     pomLocation = pomLocation.replace('pom.xml', 'effectivepom.xml')
@@ -50,14 +50,16 @@ def call(Map params = [:]) {
 
     // Get repository URL (properties file in Jenkins)
     def repoUrl = "${resolvedParams.url}"
-    configFileProvider([configFile(fileId: 'default-properties', variable: 'DEFAULT_PROPERTIES')]) {
-        def props = readProperties  file: "${DEFAULT_PROPERTIES}"
-        if (version.toUpperCase().endsWith("-SNAPSHOT")) {
-            repoUrl = props['NEXUS_SNAPSHOTS']
-        } else {
-            repoUrl = props['NEXUS_RELEASES']
+    if (repoUrl?.trim()) {
+        configFileProvider([configFile(fileId: 'default-properties', variable: 'DEFAULT_PROPERTIES')]) {
+            def props = readProperties file: "${DEFAULT_PROPERTIES}"
+            if (version.toUpperCase().endsWith("-SNAPSHOT")) {
+                repoUrl = props['NEXUS_SNAPSHOTS']
+            } else {
+                repoUrl = props['NEXUS_RELEASES']
+            }
+            logger.info("repository url $repoUrl")
         }
-        logger.info("repository url $repoUrl")
     }
 
     // Show the maven settings
