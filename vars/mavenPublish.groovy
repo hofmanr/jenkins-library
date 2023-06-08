@@ -20,6 +20,7 @@ def call(Map params = [:]) {
     Map<String, Object> resolvedParams = [
             pomLocation: 'pom.xml',
             mavenSettingsFile: 'default-maven-settings',
+            url: '',
             repositoryId: 'nexus-local'
     ] << params
 
@@ -42,15 +43,16 @@ def call(Map params = [:]) {
     // Get version from pom-file
     def pom = readMavenPom file: resolvedParams.pomLocation
     String version = pom.version
-    // Get repository URL (property in settings.xml
-    def repoUrl = "${env.nexus.repo.releases}"
-    if (version.toUpperCase().endsWith("-SNAPSHOT")) {
-        repoUrl = "${env.nexus.repo.snapshots}"
-    }
-    logger.info("Repo URL $repoUrl")
-
-    if (repoUrl == null || repoUrl =="") {
-        repoUrl = "${resolvedParams.url}"
+    // Get repository URL (properties file in Jenkins)
+    def repoUrl = "${resolvedParams.url}"
+    configFileProvider([configFile(fileId: 'default-properties', variable: 'DEFAULT_PROPERTIES')]) {
+        def props = readProperties  file: $DEFAULT_PROPERTIES
+        if (version.toUpperCase().endsWith("-SNAPSHOT")) {
+            repoUrl = props['NEXUS_SNAPSHOTS']
+        } else {
+            repoUrl = props['NEXUS_RELEASES']
+        }
+        logger.info("repository url $repoUrl")
     }
 
     // Show the maven settings
@@ -63,7 +65,7 @@ def call(Map params = [:]) {
         logger.info("publish artifact $artifact")
 
         configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_SETTINGS')]) {
-            sh "mvn -s $MAVEN_SETTINGS deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
+            sh "mvn -s $MAVEN_SETTINGS deploy:deploy-file -Durl=$repoUrl -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
         }
 
 //        withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
