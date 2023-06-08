@@ -23,6 +23,7 @@ def call(Map params = [:]) {
             repositoryId: 'nexus-local'
     ] << params
 
+    Logger.init(this)
     def logger = new Logger(this)
 
     logger.info "params ${resolvedParams}"
@@ -38,6 +39,7 @@ def call(Map params = [:]) {
         return
     }
 
+    // Show the maven settings
     configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
         sh "mvn -gs $MAVEN_GLOBAL_SETTINGS help:effective-settings"
     }
@@ -54,12 +56,4 @@ def call(Map params = [:]) {
 //            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
 //        }
     }
-//    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
-//        fileList.each { file ->
-//            def artifact = file.absolutePath
-//            logger.info("publish artifact $artifact")
-//            sh "mvn help:effective-settings"
-//            sh "mvn deploy:deploy-file -Durl=${resolvedParams.url} -Dfile=$artifact -Dpackaging=${resolvedParams.packaging} -DrepositoryId=${resolvedParams.repositoryId} -DpomFile=${resolvedParams.pomLocation}"
-//        }
-//    }
 }

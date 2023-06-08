@@ -12,13 +12,13 @@ def call(Map<String, Object> params = [:]) {
 
     logger.info "build with arguments ${resolvedParams.arguments}"
 
-//    configFileProvider(
-//            [configFile(fileId: jenkinsSettings, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-//        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS deploy'
-//    }
-
-    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
-        sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
+    configFileProvider([configFile(fileId: jenkinsSettings, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
+        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS  ${resolvedParams.arguments}'
     }
+
+// WithMaven doesn't work when using a docker agent (so we have to use ConfigFileProvider which does work)
+//    withMaven(globalMavenSettingsConfig: resolvedParams.mavenSettingsFile) {
+//        sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
+//    }
 //    sh "mvn -f ${resolvedParams.pomLocation} ${resolvedParams.arguments}"
 }
