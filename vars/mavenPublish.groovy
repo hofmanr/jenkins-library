@@ -39,6 +39,20 @@ def call(Map params = [:]) {
         return
     }
 
+    // Get version from pom-file
+    def pom = readMavenPom file: resolvedParams.pomLocation
+    String version = pom.version
+    // Get repository URL (property in settings.xml
+    def repoUrl = "${env.nexus.repo.releases}"
+    if (version.toUpperCase().endsWith("-SNAPSHOT")) {
+        repoUrl = "${env.nexus.repo.snapshots}"
+    }
+    logger.info("Repo URL $repoUrl")
+
+    if (repoUrl == null || repoUrl =="") {
+        repoUrl = "${resolvedParams.url}"
+    }
+
     // Show the maven settings
     configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
         sh "mvn -gs $MAVEN_GLOBAL_SETTINGS help:effective-settings"
