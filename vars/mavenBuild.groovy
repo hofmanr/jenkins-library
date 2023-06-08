@@ -12,7 +12,7 @@ def call(Map<String, Object> params = [:]) {
 
     logger.info "build with arguments ${resolvedParams.arguments}"
 
-    configFileProvider([configFile(fileId: jenkinsSettings, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
+    configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_GLOBAL_SETTINGS')]) {
         sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS  ${resolvedParams.arguments}'
     }
 
