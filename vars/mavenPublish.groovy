@@ -49,8 +49,8 @@ def call(Map params = [:]) {
     String version = pom.version
 
     // Get repository URL (properties file in Jenkins)
-    def repoUrl = "${resolvedParams.url}"
-    if (repoUrl?.trim()) {
+    String repoUrl = "${resolvedParams.url}"
+    if (!repoUrl?.trim()) {
         configFileProvider([configFile(fileId: 'default-properties', variable: 'DEFAULT_PROPERTIES')]) {
             def props = readProperties file: "${DEFAULT_PROPERTIES}"
             if (version.toUpperCase().endsWith("-SNAPSHOT")) {
