@@ -1,5 +1,16 @@
 import nl.rhofman.jenkins.utils.logging.Logger
+import nl.rhofman.jenkins.utils.version.Version
 
+/**
+ * Initialise teh build job with the following parameters
+ * <ul>
+ *     <li>pomLocation - optional; the pom file to be used; default pom.xml</li>
+ *     <li>versionStrategy - optional; the version strategy to use; allowable values GitFlow, FeatureBranch</li>
+ *     <li>prefix - optional; the prefix of the app; used for determining version; e.g. bsb</li>
+ * </ul>
+ * @param params
+ * @return
+ */
 def call(Map<String, Object> params = [:]) {
     Map<String, Object> resolvedParams = [
             pomLocation: 'pom.xml',
@@ -48,5 +59,28 @@ def call(Map<String, Object> params = [:]) {
 
     env.LAST_COMMITTER = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%an'").trim()
     logger.info "logger fullProjectName='${currentBuild.fullProjectName}', build='${currentBuild.displayName}', automated=${env.IS_AUTOMATED_BUILD}, lastCommitter='${env.LAST_COMMITTER}', authors='${authors.unique()}'"
+
+    if (resolvedParams.versionStrategy) {
+        def version = null
+        Version versionService = new Version(logger)
+        version = versionService.getVersion(resolvedParams.versionStrategy, resolvedParams.prefix, resolvedParams.pomLocation)
+
+        if (env.GIT_SEMANTIC_VERSION) {
+            logger.warn("overriding git semantic version ${env.GIT_SEMANTIC_VERSION}")
+        }
+
+        env.GIT_SEMANTIC_VERSION = version
+        logger.info "version is set to ${env.GIT_SEMANTIC_VERSION}"
+
+        if (resolvedParams.renameJenkinsBuild) {
+            currentBuild.displayName = "${currentBuild.displayName} - ${version}"
+        }
+
+        configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_SETTINGS')]) {
+            sh "mvn -s $MAVEN_SETTINGS -f ${resolvedParams.pomLocation} version:set -DnewVersion=${env.GIT_SEMANTIC_VERSION} -DgenerateBackupPoms=false"
+        }
+    }
+
+    logger.info 'done init build'
 }
 

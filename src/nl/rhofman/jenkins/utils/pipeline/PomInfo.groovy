@@ -8,4 +8,10 @@ class PomInfo {
     static HashMap getPomInfo() {
         return [:]
     }
+
+    @NonCPS
+    static String getVersion(String pomLocation) {
+        def pom = readMavenPom file: pomLocation
+        return pom.version
+    }
 }
