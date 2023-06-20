@@ -1,5 +1,6 @@
 package nl.rhofman.jenkins.utils.version
 
+import com.cloudbees.groovy.cps.NonCPS
 import nl.rhofman.jenkins.utils.pipeline.PomInfo
 
 class Version {
@@ -9,6 +10,7 @@ class Version {
         this.logger = logger
     }
 
+    @NonCPS
     String getVersion(String versionStrategy = "GitFlow", String prefix, String pomLocation = "pom.xml") {
         String strategy = versionStrategy.toUpperCase()
         String branch = "${env.BRANCH_NAME}"  // e.g. feature/BSB-3454 (BSB-3454 could be a ticket in Jira) or develop or master or release/1.2.0

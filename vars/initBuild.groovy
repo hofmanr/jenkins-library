@@ -61,9 +61,8 @@ def call(Map<String, Object> params = [:]) {
     logger.info "logger fullProjectName='${currentBuild.fullProjectName}', build='${currentBuild.displayName}', automated=${env.IS_AUTOMATED_BUILD}, lastCommitter='${env.LAST_COMMITTER}', authors='${authors.unique()}'"
 
     if (resolvedParams.versionStrategy) {
-        def version = null
         Version versionService = new Version(logger)
-        version = versionService.getVersion(resolvedParams.versionStrategy, resolvedParams.prefix, resolvedParams.pomLocation)
+        def version = versionService.getVersion(resolvedParams.versionStrategy, resolvedParams.prefix, resolvedParams.pomLocation)
 
         if (env.GIT_SEMANTIC_VERSION) {
             logger.warn("overriding git semantic version ${env.GIT_SEMANTIC_VERSION}")
