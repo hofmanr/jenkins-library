@@ -77,7 +77,7 @@ def call(Map<String, Object> params = [:]) {
         }
 
         configFileProvider([configFile(fileId: resolvedParams.mavenSettingsFile, variable: 'MAVEN_SETTINGS')]) {
-            sh "mvn -s $MAVEN_SETTINGS -f ${resolvedParams.pomLocation} version:set -DnewVersion=${env.GIT_SEMANTIC_VERSION} -DgenerateBackupPoms=false"
+            sh "mvn -s $MAVEN_SETTINGS -f ${resolvedParams.pomLocation} versions:set -DnewVersion=${env.GIT_SEMANTIC_VERSION} -DgenerateBackupPoms=false"
         }
     }
 
